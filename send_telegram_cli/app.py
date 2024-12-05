@@ -174,11 +174,6 @@ def load_config(filename=os.path.join(os.path.dirname(__file__), "config.json"))
     return config["config"]
 
 
-# config = load_config()
-# BOT_TOKEN = config["bot_token"]
-# CHAT_ID = config["chat_id"]
-
-
 def send_message(msg, bot_token, chatid):
     command = (
         "curl -s -X POST https://api.telegram.org/bot"

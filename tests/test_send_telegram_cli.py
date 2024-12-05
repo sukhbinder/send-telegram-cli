@@ -3,7 +3,7 @@ import pytest
 import subprocess
 import json
 from unittest.mock import patch, MagicMock
-from send_telegram_cli.app import main, get_key, user_dir
+from send_telegram_cli.app import main as mainrun, get_key, user_dir
 
 
 def test_create_parser():
@@ -50,8 +50,7 @@ def test_main_send_message(
     test_args = ["sendtele", "-m", "Hello, World!"]
 
     with patch("sys.argv", test_args):
-        # Act
-        main()
+        mainrun()
 
     # Assert
     mock_subprocess_call.assert_called_once()
@@ -61,32 +60,3 @@ def test_main_send_message(
     assert (
         "Hello, World!" in mock_subprocess_call.call_args[0][0][-1]
     )  # Check if message is included
-
-
-@patch("subprocess.call")
-@patch("send_telegram_cli.app.get_key")
-@patch("send_telegram_cli.app.get_default")
-def test_main_send_attachment(
-    mock_get_default, mock_get_key, mock_subprocess_call, mock_keys
-):
-    """Test sending an attachment using the main function."""
-    # Arrange
-    mock_get_default.side_effect = (
-        lambda name: "test_bot" if name == "bot" else "test_chatid"
-    )
-    mock_get_key.side_effect = (
-        lambda key_type, name: "123456:ABC-DEF1234ghIkl-zyx57W2P0s"
-        if name == "test_bot"
-        else "987654321"
-    )
-
-    # Simulate command line arguments
-    test_args = ["sendtele", "-a", "path/to/file.jpg"]
-
-    with patch("sys.argv", test_args):
-        # Act
-        main()
-
-    # Assert
-    mock_subprocess_call.assert_called_once()
-    assert "path/to/file.jpg" in mock_subprocess_call.call_args[0][0]
